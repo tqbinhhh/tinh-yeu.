@@ -140,9 +140,27 @@ body {
     }
 }
 
-/* CSS CHO RESPONSIVE */
+/* === PHẦN CSS RESPONSIVE ĐÃ CẢI TIẾN === */
+
+/* Cho màn hình máy tính bảng và điện thoại lớn */
 @media (max-width: 650px) {
+    body {
+        /* Căn các mục lên trên để tránh bị cắt xén */
+        align-items: flex-start;
+        padding-top: 5vh;
+    }
     .scene {
+        /* Thu nhỏ toàn bộ scene để vừa với chiều rộng màn hình */
         transform: scale(calc(100vw / 650));
+        /* Đặt gốc biến đổi ở trên cùng để scene co lại về phía trên */
+        transform-origin: center top; 
+    }
+}
+
+/* Cho màn hình điện thoại rất nhỏ */
+@media (max-width: 480px) {
+    .greeting-text {
+        /* Phóng to cỡ chữ gốc một chút, để khi bị thu nhỏ lại vẫn dễ đọc */
+        font-size: 1.5em;
     }
 }
