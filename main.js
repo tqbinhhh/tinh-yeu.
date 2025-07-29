@@ -36,30 +36,52 @@ function playAnimation() {
         topOffset += step;
     });
     
-    // Lấy tất cả các phần tử cần lặp lại hiệu ứng
     const character = document.querySelector('.character');
     const biuText = document.querySelector('.biu-text');
     const flyingHeart = document.querySelector('.flying-heart-from-hand');
     const greetingText = document.querySelector('.greeting-text');
     
-    // Reset animation của tất cả các phần tử
-    character.style.animation = 'none';
-    biuText.style.animation = 'none';
-    flyingHeart.style.animation = 'none';
-    greetingText.style.animation = 'none';
+    // Reset animations
+    const elements = [character, biuText, flyingHeart, greetingText];
+    elements.forEach(el => el.style.animation = 'none');
     
-    // Kích hoạt reflow để trình duyệt nhận biết sự thay đổi
+    // Trigger reflow to restart animation
     void character.offsetWidth;
-    
-    // Bật lại animation
-    character.style.animation = '';
-    biuText.style.animation = '';
-    flyingHeart.style.animation = '';
-    greetingText.style.animation = '';
+
+    // Re-apply animations
+    elements.forEach(el => el.style.animation = '');
 }
 
-// Chạy animation lần đầu khi trang được tải
-playAnimation();
+// Get references to elements
+const playButton = document.getElementById('playButton');
+const scene = document.querySelector('.scene');
+const curtainContainer = document.getElementById('curtain-container');
+let animationInterval; // To store the interval ID
 
-// Lặp lại toàn bộ hiệu ứng sau mỗi 6 giây
-setInterval(playAnimation, 6000);
+// Initial curtain state
+curtainContainer.classList.add('closed');
+
+playButton.addEventListener('click', () => {
+    document.body.classList.add('animation-started');
+
+    playButton.style.display = 'none';
+    
+    scene.classList.remove('hidden');
+    
+    // Open curtains
+    curtainContainer.classList.remove('closed');
+    
+    setTimeout(() => {
+        // Run animation for the first time
+        playAnimation();
+        
+        // Clear any existing interval before setting a new one
+        if (animationInterval) {
+            clearInterval(animationInterval);
+        }
+
+        // Set interval to repeat animation every 6 seconds
+        animationInterval = setInterval(playAnimation, 6000); 
+
+    }, 500); // Start animation shortly after curtains begin to open
+});
