@@ -1,10 +1,10 @@
 :root {
-    --heart-size: 20px; /* Kích thước mỗi trái tim nhỏ */
-    --heart-gap: 4px;   /* Khoảng cách giữa các trái tim */
-    --main-bg-color: #fef9f9; /* Màu nền hơi hồng nhạt */
-    --character-stroke-color: #222; /* Màu nét vẽ */
-    --heart-color: #d92442; /* Màu trái tim chính */
-    --flying-heart-color: #f4acb7; /* Màu trái tim bay ra (hồng nhạt) */
+    --heart-size: 20px;
+    --heart-gap: 4px;
+    --main-bg-color: #fef9f9;
+    --character-stroke-color: #222;
+    --heart-color: #d92442;
+    --flying-heart-color: #f4acb7;
 }
 
 body {
@@ -16,6 +16,7 @@ body {
     background-color: var(--main-bg-color);
     font-family: 'Arial', sans-serif;
     overflow: hidden;
+    transition: align-items 0.3s ease;
 }
 
 .scene {
@@ -39,7 +40,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain; 
+    object-fit: contain;
     opacity: 0;
     animation: characterAppear 1s ease-out forwards;
 }
@@ -87,14 +88,14 @@ body {
 
 .greeting-text {
     position: absolute;
-    bottom: 30px; 
-    right: 0px;  
-    width: 350px; 
+    bottom: 30px;
+    right: 0px;
+    width: 350px;
     text-align: center;
-    font-size: 1.3em; 
+    font-size: 1.3em;
     font-weight: bold;
     color: var(--heart-color);
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
     opacity: 0;
     animation: fadeInSmoothly 1.2s ease-out forwards;
     animation-delay: 3s;
@@ -119,48 +120,151 @@ body {
 }
 
 @keyframes fadeInSmoothly {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes characterAppear {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0); 
-    }
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* === PHẦN CSS RESPONSIVE ĐÃ CẢI TIẾN === */
+.scene.hidden {
+    display: none;
+}
 
-/* Cho màn hình máy tính bảng và điện thoại lớn */
-@media (max-width: 650px) {
-    body {
-        /* Căn các mục lên trên để tránh bị cắt xén */
+.heart-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    background-color: var(--heart-color);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 101;
+}
+
+.heart-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.heart-button .heart-icon {
+    width: 30px;
+    height: 30px;
+    fill: white;
+    margin-right: 12px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+#curtain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.curtain {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50.1%;
+    background-color: var(--heart-color);
+    transition: transform 1.5s ease-in-out;
+}
+
+#curtain-left {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+#curtain-right {
+    right: 0;
+    transform: translateX(100%);
+}
+
+#curtain-container.closed #curtain-left,
+#curtain-container.closed #curtain-right {
+    transform: translateX(0);
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+    body.animation-started {
         align-items: flex-start;
-        padding-top: 5vh;
+        padding-top: 5vh; /* Thêm khoảng đệm ở trên để không bị sát mép */
     }
-    .scene {
-        /* Thu nhỏ toàn bộ scene để vừa với chiều rộng màn hình */
-        transform: scale(calc(100vw / 650));
-        /* Đặt gốc biến đổi ở trên cùng để scene co lại về phía trên */
-        transform-origin: center top; 
-    }
-}
 
-/* Cho màn hình điện thoại rất nhỏ */
-@media (max-width: 480px) {
+    .scene {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        margin-top: 0; /* Bỏ margin-top cũ */
+    }
+
+    /* ĐIỀU CHỈNH THỨ TỰ VÀ KHOẢNG CÁCH */
+    .character-container {
+        order: 1; /* Nhân vật hiển thị đầu tiên */
+        width: 150px;
+        height: 150px;
+        margin-bottom: 0;
+    }
+
     .greeting-text {
-        /* Phóng to cỡ chữ gốc một chút, để khi bị thu nhỏ lại vẫn dễ đọc */
+        order: 2; /* Dòng chữ hiển thị thứ hai */
+        position: static;
+        width: 90%;
+        font-size: 1.1em;
+        margin-bottom: 15px; /* TẠO KHOẢNG CÁCH VỚI KHỐI TRÁI TIM BÊN DƯỚI */
+    }
+    
+    .heart-grid-container {
+        order: 3; /* Khối trái tim hiển thị cuối cùng */
+        width: 80vw;
+        height: auto;
+        margin-bottom: 25px;
+        transform: scale(0.9);
+    }
+    /* KẾT THÚC PHẦN ĐIỀU CHỈNH */
+
+    .biu-text {
+        bottom: 50px;
+        left: 100px;
         font-size: 1.5em;
+    }
+
+    .flying-heart-from-hand {
+        bottom: 60px;
+        left: 80px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .heart-button {
+        font-size: 1.2em;
+        padding: 12px 24px;
+    }
+
+    .heart-button .heart-icon {
+        width: 25px;
+        height: 25px;
     }
 }
